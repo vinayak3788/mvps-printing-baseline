@@ -71,13 +71,11 @@ export const blockUser = async (email) => {
   if (email === "vinayak3788@gmail.com") {
     throw new Error("Cannot block protected admin.");
   }
-  await pool.query(`UPDATE users SET blocked = TRUE WHERE email = $1`, [email]);
+  await pool.query(`UPDATE users SET blocked = 1 WHERE email = $1`, [email]);
 };
 
 export const unblockUser = async (email) => {
-  await pool.query(`UPDATE users SET blocked = FALSE WHERE email = $1`, [
-    email,
-  ]);
+  await pool.query(`UPDATE users SET blocked = 0 WHERE email = $1`, [email]);
 };
 
 export const deleteUser = async (email) => {
