@@ -243,3 +243,32 @@ router.post("/create-user-profile", async (req, res) => {
   }
 });
 export default router;
+
+//-- Update user Profile
+
+// Update user profile route
+router.post("/update-profile", async (req, res) => {
+  const { email, firstName, lastName, mobileNumber, mobileVerified } = req.body;
+  if (!email) return res.status(400).json({ error: "Email required." });
+
+  try {
+    // Validate & parse the 10-digit string into a Number, or null
+    const mobilenumber = /^\d{10}$/.test(mobileNumber)
+      ? parseInt(mobileNumber, 10)
+      : null;
+
+    // Upsert the profile with new details
+    await upsertProfile({
+      email,
+      firstName,
+      lastName,
+      mobileNumber: mobilenumber,
+      mobileVerified: mobileVerified ?? 0,
+    });
+
+    res.json({ message: "Profile updated successfully." });
+  } catch (err) {
+    console.error("❌ Error updating profile:", err);
+    res.status(500).json({ error: "Internal error updating profile." });
+  }
+});
