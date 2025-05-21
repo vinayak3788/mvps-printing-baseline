@@ -1,8 +1,11 @@
+
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
+
+import enquiryRoutes from './routes/enquiryRoutes.js';
 
 import stationeryRoutes from "./routes/stationeryRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -33,6 +36,9 @@ app.use((req, res, next) => {
   );
   next();
 });
+// enquiry route form
+
+app.use('/api', enquiryRoutes);
 
 // 3️⃣ Content Security Policy (CSP) header
 app.use((req, res, next) => {
