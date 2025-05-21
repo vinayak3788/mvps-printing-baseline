@@ -17,18 +17,6 @@ const upload = multer({ storage: multer.memoryStorage() });
 // ——— SUBMIT PRINT/FILE FLOW ———
 router.post("/submit-order", upload.array("files"), async (req, res) => {
   try {
-    const userEmail = req.body.email;
-
-    if (!userEmail) {
-      return res.status(400).json({ error: "Email is required." });
-    }
-
-    const blocked = await isUserBlocked(userEmail);
-    if (blocked) {
-      return res.status(403).json({ error: "User is blocked from placing orders." });
-    }
-    
-  try {
     const {
       user,
       printType,
