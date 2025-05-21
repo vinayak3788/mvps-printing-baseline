@@ -23,6 +23,8 @@ const AdminDashboard = React.lazy(
 const UserDashboard = React.lazy(() => import("./features/user/UserDashboard"));
 const Cart = React.lazy(() => import("./pages/Cart"));
 const UserOrders = React.lazy(() => import("./pages/UserOrders"));
+const Landing = React.lazy(() => import("./pages/Landing"));
+const ContactUs = React.lazy(() => import("./pages/ContactUs"));
 
 // ——— Clears cart on sign-out and waits for initial auth check ———
 function AuthListener({ children }) {
@@ -30,13 +32,12 @@ function AuthListener({ children }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    // subscribe exactly once
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) clearCart();
       setReady(true);
     });
     return unsubscribe;
-  }, []); // ← removed clearCart from deps
+  }, []);
 
   if (!ready) return <div className="text-center mt-10">Loading…</div>;
   return children;
@@ -136,8 +137,25 @@ export default function App() {
         <Toaster position="top-center" />
 
         <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          {/* Public landing & support */}
+          <Route
+            path="/"
+            element={
+              <Suspense fallback={Loading}>
+                <Landing />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/contact-us"
+            element={
+              <Suspense fallback={Loading}>
+                <ContactUs />
+              </Suspense>
+            }
+          />
 
+          {/* Auth */}
           <Route
             path="/login"
             element={
@@ -146,7 +164,6 @@ export default function App() {
               </Suspense>
             }
           />
-
           <Route
             path="/signup"
             element={
@@ -155,7 +172,6 @@ export default function App() {
               </Suspense>
             }
           />
-
           <Route
             path="/verify-mobile"
             element={
@@ -165,6 +181,7 @@ export default function App() {
             }
           />
 
+          {/* Protected user routes */}
           <Route
             path="/userdashboard"
             element={
@@ -175,7 +192,6 @@ export default function App() {
               </ProtectedUserRoute>
             }
           />
-
           <Route
             path="/cart"
             element={
@@ -186,7 +202,6 @@ export default function App() {
               </ProtectedUserRoute>
             }
           />
-
           <Route
             path="/orders"
             element={
@@ -198,6 +213,7 @@ export default function App() {
             }
           />
 
+          {/* Protected admin route */}
           <Route
             path="/admin"
             element={
@@ -209,6 +225,7 @@ export default function App() {
             }
           />
 
+          {/* Fallback */}
           <Route
             path="*"
             element={
