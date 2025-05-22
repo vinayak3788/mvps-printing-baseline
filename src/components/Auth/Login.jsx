@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { auth, googleProvider } from "../../config/firebaseConfig";
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+} from "firebase/auth";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -14,7 +18,35 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Super-admin bypass
+  // 30-minute inactivity logout
+  useEffect(() => {
+    let logoutTimer;
+    const resetTimer = () => {
+      clearTimeout(logoutTimer);
+      logoutTimer = setTimeout(
+        () => {
+          auth.signOut();
+          toast("Session expired. You’ve been logged out.");
+          navigate("/login");
+        },
+        30 * 60 * 1000,
+      ); // 30 mins
+    };
+
+    const activityEvents = ["mousemove", "keydown", "click"];
+    activityEvents.forEach((event) =>
+      window.addEventListener(event, resetTimer),
+    );
+    resetTimer(); // init
+
+    return () => {
+      activityEvents.forEach((event) =>
+        window.removeEventListener(event, resetTimer),
+      );
+      clearTimeout(logoutTimer);
+    };
+  }, [navigate]);
+
   const postLoginCheck = async (userEmail) => {
     if (userEmail === "vinayak3788@gmail.com") {
       return true;
@@ -38,6 +70,8 @@ export default function Login() {
         return false;
       }
 
+      // Optional: store user info for greeting
+      localStorage.setItem("username", profile.name || userEmail);
       return true;
     } catch (err) {
       console.error("Error fetching profile:", err);

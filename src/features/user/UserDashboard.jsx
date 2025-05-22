@@ -22,6 +22,8 @@ export default function UserDashboard() {
     useOrders();
   const [activeTab, setActiveTab] = useState("orders");
 
+  // Username display at page:
+
   // ——— fetch user’s orders once on mount ———
   useEffect(() => {
     (async () => {
@@ -84,6 +86,7 @@ export default function UserDashboard() {
         <Button variant="danger" onClick={handleLogout}>
           Logout
         </Button>
+        <UserHeader />
       </div>
 
       {/* Tab buttons */}
