@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { auth, signOut } from "../config/firebaseConfig";
+import { auth } from "../config/firebaseConfig";
+import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
