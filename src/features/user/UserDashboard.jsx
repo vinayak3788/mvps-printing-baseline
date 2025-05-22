@@ -86,7 +86,6 @@ export default function UserDashboard() {
         <Button variant="danger" onClick={handleLogout}>
           Logout
         </Button>
-        <UserHeader />
       </div>
 
       {/* Tab buttons */}
