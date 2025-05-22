@@ -1,5 +1,3 @@
-// src/features/user/UserDashboard.jsx
-
 import React, { useState, useEffect } from "react";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +12,7 @@ import UploadOrderForm from "./components/UploadOrderForm";
 import OrdersHistory from "./components/OrdersHistory";
 import StationeryStore from "./components/StationeryStore";
 import { useOrders } from "./components/useOrders";
+import UserHeader from "../../components/UserHeader"; // 👈 Add this line
 
 export default function UserDashboard() {
   const navigate = useNavigate();
@@ -21,8 +20,6 @@ export default function UserDashboard() {
   const { files, setFiles, myOrders, fetchMyOrders, ordersLoading } =
     useOrders();
   const [activeTab, setActiveTab] = useState("orders");
-
-  // Username display at page:
 
   // ——— fetch user’s orders once on mount ———
   useEffect(() => {
@@ -74,6 +71,9 @@ export default function UserDashboard() {
   return (
     <Layout title="MVPS Dashboard">
       <Toaster />
+
+      {/* 👇 User info display */}
+      <UserHeader />
 
       {/* Top controls */}
       <div className="flex flex-wrap justify-end gap-2 mb-6">
