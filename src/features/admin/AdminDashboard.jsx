@@ -15,6 +15,7 @@ import UsersTable from "./components/UsersTable";
 import AdminStationeryForm from "./components/AdminStationeryForm";
 import AdminStationeryTable from "./components/AdminStationeryTable";
 import EditUserModal from "./components/EditUserModal";
+import UserHeader from "../../components/UserHeader";
 
 import { getAllOrders, updateOrderStatus } from "../../api/orderApi";
 import {
@@ -183,7 +184,7 @@ export default function AdminDashboard() {
   return (
     <Layout title="Admin Dashboard">
       <Toaster />
-
+      <UserHeader />
       {/* Top-bar controls */}
       <div className="flex justify-end gap-2 mb-6">
         <Button variant="secondary" onClick={switchToUser}>

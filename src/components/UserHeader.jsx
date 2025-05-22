@@ -1,44 +1,45 @@
-// src/components/UserHeader.jsx
-
 import React, { useEffect, useState } from "react";
-import { auth } from "../config/firebaseConfig";
+import { auth, signOut } from "../../config/firebaseConfig";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function UserHeader() {
-  const [username, setUsername] = useState("");
+  const [firstName, setFirstName] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const user = auth.currentUser;
-    if (!user) return;
-
-    const fetchName = async () => {
+    const fetchFirstName = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
       try {
-        const { data: profile } = await axios.get(
+        const { data } = await axios.get(
           `/api/get-profile?email=${encodeURIComponent(user.email)}`,
         );
-        if (profile?.name) {
-          setUsername(profile.name);
-        } else {
-          // Fallback: derive name from email
-          const fallbackName = user.email.split("@")[0];
-          setUsername(fallbackName);
-        }
+        setFirstName(data.firstname || user.email.split("@")[0]);
       } catch (err) {
-        console.error("Failed to fetch user profile:", err);
-        const fallbackName = user.email.split("@")[0];
-        setUsername(fallbackName);
+        console.error("Failed to fetch profile:", err);
+        setFirstName(user.email.split("@")[0]);
       }
     };
-
-    fetchName();
+    fetchFirstName();
   }, []);
 
-  if (!username) return null;
+  const handleLogout = async () => {
+    await signOut(auth);
+    navigate("/login", { replace: true });
+  };
 
   return (
-    <div className="text-right text-sm text-gray-600 mb-2">
-      👋 Welcome,{" "}
-      <span className="font-semibold text-purple-700">{username}</span>!
+    <div className="absolute top-4 right-4 flex items-center gap-4 text-sm font-semibold">
+      {firstName ? <span>Welcome, {firstName}!</span> : <span>Loading...</span>}
+      <button
+        onClick={handleLogout}
+        className="text-red-600 hover:underline"
+        aria-label="Logout"
+      >
+        Logout
+      </button>
     </div>
   );
 }
