@@ -23,9 +23,31 @@ export function CartProvider({ children }) {
 
   const addToCart = (type, item) => {
     if (type === "print") {
-      setPrintItems((prev) => [...prev, item]);
+      setPrintItems((prev) => {
+        const existingIndex = prev.findIndex(
+          (i) => i.id === item.id && i.color === item.color,
+        );
+        if (existingIndex !== -1) {
+          const updated = [...prev];
+          updated[existingIndex].quantity += item.quantity || 1;
+          return updated;
+        } else {
+          return [...prev, { ...item, quantity: item.quantity || 1 }];
+        }
+      });
     } else {
-      setStationeryItems((prev) => [...prev, item]);
+      setStationeryItems((prev) => {
+        const existingIndex = prev.findIndex(
+          (i) => i.id === item.id && i.color === item.color,
+        );
+        if (existingIndex !== -1) {
+          const updated = [...prev];
+          updated[existingIndex].quantity += item.quantity || 1;
+          return updated;
+        } else {
+          return [...prev, { ...item, quantity: item.quantity || 1 }];
+        }
+      });
     }
   };
 
