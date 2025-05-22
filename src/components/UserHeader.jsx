@@ -3,27 +3,29 @@ import { auth } from "../config/firebaseConfig";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import toast from "react-hot-toast";
 
 export default function UserHeader() {
-  const [firstName, setFirstName] = useState(null);
+  const [firstName, setFirstName] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchFirstName = async () => {
-      const user = auth.currentUser;
-      if (!user) return;
-      try {
-        const { data } = await axios.get(
-          `/api/get-profile?email=${encodeURIComponent(user.email)}`,
-        );
-        setFirstName(data.firstname || user.email.split("@")[0]);
-      } catch (err) {
-        console.error("Failed to fetch profile:", err);
+    const user = auth.currentUser;
+    if (!user) {
+      setFirstName("");
+      return;
+    }
+
+    // Call your existing backend route /api/get-profile with user.email
+    axios
+      .get(`/api/get-profile?email=${encodeURIComponent(user.email)}`)
+      .then((res) => {
+        // If firstName exists, use it; otherwise fallback to email username
+        setFirstName(res.data.firstName || user.email.split("@")[0]);
+      })
+      .catch((error) => {
+        console.error("Error fetching user profile:", error);
         setFirstName(user.email.split("@")[0]);
-      }
-    };
-    fetchFirstName();
+      });
   }, []);
 
   const handleLogout = async () => {
@@ -32,15 +34,9 @@ export default function UserHeader() {
   };
 
   return (
-    <div className="absolute top-4 right-4 flex items-center gap-4 text-sm font-semibold">
-      {firstName ? <span>Welcome, {firstName}!</span> : <span>Loading...</span>}
-      <button
-        onClick={handleLogout}
-        className="text-red-600 hover:underline"
-        aria-label="Logout"
-      >
-        Logout
-      </button>
+    <div className="user-header">
+      <span>Welcome, {firstName}!</span>
+      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 }
